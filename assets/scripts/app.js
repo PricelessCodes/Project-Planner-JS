@@ -5,6 +5,7 @@ class ProjectItem {}
 class ProjectList {
     constructor(type) {
         const projectItems = document.querySelectorAll(`#${type}-projects li`);
+        ///asw
     }
 }
 
