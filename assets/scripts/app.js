@@ -15,23 +15,42 @@ class DOMHelper {
     }
 }
 
-class Tooltip {
-    constructor(closeNotifierFunction) {
-        this.closeNotifierHandler = closeNotifierFunction
+class Component {
+    constructor(hostElementId, insertBefore = false) {
+        if (hostElementId)
+            this.hostElement = document.getElementById(hostElementId);
+        else this.hostElement = document.body;
+
+        this.insertBefore = insertBefore;
     }
 
     attach() {
+        this.hostElement.insertAdjacentElement(
+            this.insertBefore ? "afterbegin" : "beforeend",
+            this.element
+        );
+    }
+
+    detach() {
+        if (this.element) this.element.remove();
+    }
+}
+
+class Tooltip extends Component {
+    constructor(closeNotifierFunction) {
+        super();
+        this.closeNotifierHandler = closeNotifierFunction;
+        this.create();
+    }
+
+    create() {
         const tooltipElement = document.createElement("div");
         tooltipElement.className = "card";
         tooltipElement.addEventListener("click", this.closeTooltip.bind(this));
         tooltipElement.textContent = "Dumm!!!!!!";
-        document.body.append(tooltipElement);
-        this.tooltipElement = tooltipElement;
+        this.element = tooltipElement;
     }
 
-    detach() {
-        this.tooltipElement.remove();
-    }
     closeTooltip() {
         this.detach();
         this.closeNotifierHandler(false);
@@ -70,7 +89,10 @@ class ProjectItem {
             "button:first-of-type"
         );
 
-        MoreInfoBtn.addEventListener("click", this.showMoreInfoButtonHandler.bind(this));
+        MoreInfoBtn.addEventListener(
+            "click",
+            this.showMoreInfoButtonHandler.bind(this)
+        );
     }
 
     connectSwitchButton() {
